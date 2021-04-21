@@ -31,6 +31,7 @@ class Futures {
 				}
 				
 				final ct = TAnonymous(obj);
+				#if (tink_core < "2")
 				return macro @:pos(e.pos) {
 					final __obj = $e;
 					Future.async(function(cb) {
@@ -38,6 +39,15 @@ class Futures {
 						$b{exprs}
 					});
 				}
+				#else
+				return macro @:pos(e.pos) {
+					final __obj = $e;
+					Future.irreversible(function(cb) {
+						final __ctx = new tink.core.ext.Futures.FuturesContainer<$ct>(cb, $v{fields.length});
+						$b{exprs}
+					});
+				}
+				#end
 				
 			default:
 				e.pos.error('Expected inline object declaration');

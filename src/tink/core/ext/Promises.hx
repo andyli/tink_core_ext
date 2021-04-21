@@ -37,6 +37,7 @@ class Promises {
 				}
 				
 				var ct = TAnonymous(obj);
+				#if (tink_core < "2")
 				return macro @:pos(e.pos) {
 					var __obj = $e;
 					Promise.lift(Future.async(function(cb) {
@@ -44,6 +45,15 @@ class Promises {
 						$b{exprs}
 					}));
 				}
+				#else
+				return macro @:pos(e.pos) {
+					var __obj = $e;
+					Promise.lift(Future.irreversible(function(cb) {
+						var __ctx = new tink.core.ext.Promises.PromisesContainer<$ct>(cb, $v{fields.length});
+						$b{exprs}
+					}));
+				}
+				#end
 				
 			default:
 				e.pos.error('Expected inline object declaration');

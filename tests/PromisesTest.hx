@@ -75,8 +75,13 @@ class PromisesTest {
 	var run = false;
 	function foo() return delay('foo', 100);
 	function bar() return delay('bar', 200);
+	#if (tink_core < "2")
 	function dummy() return Future.async(function(cb) cb(run = true), true);
 	function delay(v, i) return Future.async(function(cb) haxe.Timer.delay(cb.bind(v), i));
+	#else
+	function dummy() return Future.irreversible(function(cb) cb(run = true));
+	function delay(v, i) return Future.delay(i, v);
+	#end
 }
 
 private typedef Private = {foo:Int}
