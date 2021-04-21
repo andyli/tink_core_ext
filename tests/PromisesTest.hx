@@ -49,12 +49,12 @@ class PromisesTest {
 	public function queue() {
 		var counter = 0;
 		var queue = Promises.queue();
-		var promises = [for(i in 1...4) Promise.lazy(() -> new Promise(function(resolve, reject) {
-			haxe.Timer.delay(function() {
+		var promises = [for(i in 1...4) Promise.lazy(() ->
+			(Future.delay((5-i)*20, function() {
 				counter += i;
-				resolve(Noise);
-			}, (5-i)*20);
-		}))];
+				return Noise;
+			}):Promise<Noise>)
+		)];
 		
 		asserts.assert(counter == 0);
 		queue.queue(() -> promises[0]).handle(o -> {
